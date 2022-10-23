@@ -9,10 +9,11 @@ public class CarSpawner : MonoBehaviour
     [SerializeField] float minSpawnDuration = 2;
     [SerializeField] float maxSpawnDuration = 4;
     bool isRight;
-    float timer = 3;
+    float timer;
     private void Start()
     {
         isRight = Random.value > 0.5f ? true : false;
+        timer = Random.Range(minSpawnDuration, maxSpawnDuration);
     }
     private void Update()
     {
@@ -26,6 +27,7 @@ public class CarSpawner : MonoBehaviour
 
         var spawnPos = this.transform.position + 
             Vector3.right * (isRight ? -(terrain.Extent + 1) : terrain.Extent + 1);
+
         var go = Instantiate(
             original: carPrefab,
             position: spawnPos,
