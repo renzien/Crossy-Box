@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] TMP_Text stepText;
     [SerializeField] ParticleSystem dieParticles;
     [SerializeField, Range(0.01f,1f)] float moveDuration = 0.2f;
     [SerializeField, Range(0.01f,1f)] float jumpHeight = 0.5f;
@@ -12,6 +14,11 @@ public class Player : MonoBehaviour
     private float backBoundary;
     private float leftBoundary;
     private float rightBoundary;
+    [SerializeField] private int maxTravel;
+    public int MaxTravel { get => maxTravel; }
+    [SerializeField] private int currentTravel;
+    public int CurrentTravel{ get => currentTravel; } 
+    public bool IsDie { get => this.enabled == false; }
 
     public void SetUp(int minZPos, int extent)
     {
@@ -59,10 +66,22 @@ public class Player : MonoBehaviour
 
         // Maju Mundur / Move
         transform.DOMoveX(TargetPosition.x, moveDuration);
-        transform.DOMoveZ(TargetPosition.z, moveDuration);
+        transform
+            .DOMoveZ(TargetPosition.z, moveDuration)
+            .OnComplete(UpdateTravel);
     }
 
-    private bool IsJumping()
+    private void UpdateTravel()
+    {
+        currentTravel = (int) this.transform.position.z;
+
+        if(currentTravel > maxTravel)
+            maxTravel = currentTravel;
+        
+        stepText.text = "STEP: " + maxTravel.ToString();
+    }
+
+    public bool IsJumping()
     {
         return DOTween.IsTweening(transform);
     }
@@ -75,7 +94,7 @@ public class Player : MonoBehaviour
         var car = other.GetComponent<Car>();
         if (car != null)
         {
-            AnimateDie(car);
+            AnimateCrash(car);
         }
 
         if (other.tag == "Car")
@@ -84,7 +103,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void AnimateDie(Car car)
+    private void AnimateCrash(Car car)
     {
         // var isRight = car.trasnform.rotation.y == 90;
         // transform.DOMoveX(isRight ? 8 : -8, 0.2f);
