@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
 using DG.Tweening;
 
@@ -110,5 +112,10 @@ public class GameManager : MonoBehaviour
 
         // Penentuan terrain block
         return Random.value > 0.5f ? road : grass;
+    }
+
+    public void PlayGame()
+    {
+        SceneManager.LoadScene(1);
     }
 }
